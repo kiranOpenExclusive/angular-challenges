@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { randText } from '@ngneat/falso';
+import { TodoInterface } from './interfaces/todo.interface';
 
 @Component({
   standalone: true,
@@ -11,12 +12,13 @@ import { randText } from '@ngneat/falso';
     <div *ngFor="let todo of todos">
       {{ todo.title }}
       <button (click)="update(todo)">Update</button>
+      <button (click)="delete(todo.id)">Delete</button>
     </div>
   `,
   styles: [],
 })
 export class AppComponent implements OnInit {
-  todos!: any[];
+  todos!: TodoInterface[];
 
   constructor(private http: HttpClient) {}
 
@@ -28,14 +30,13 @@ export class AppComponent implements OnInit {
       });
   }
 
-  update(todo: any) {
+  update(todo: TodoInterface) {
     this.http
       .put<any>(
         `https://jsonplaceholder.typicode.com/todos/${todo.id}`,
         JSON.stringify({
           todo: todo.id,
           title: randText(),
-          body: todo.body,
           userId: todo.userId,
         }),
         {
@@ -46,6 +47,16 @@ export class AppComponent implements OnInit {
       )
       .subscribe((todoUpdated: any) => {
         this.todos[todoUpdated.id - 1] = todoUpdated;
+      });
+  }
+
+  delete(todoId: number) {
+    this.http
+      .delete<any>(`https://jsonplaceholder.typicode.com/todos/${todoId}`)
+      .subscribe(() => {
+        this.todos = this.todos.filter(
+          (todo: TodoInterface) => todo.id !== todoId,
+        );
       });
   }
 }
