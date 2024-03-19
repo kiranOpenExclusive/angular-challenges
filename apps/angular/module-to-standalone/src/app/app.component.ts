@@ -1,4 +1,6 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -25,5 +27,9 @@ import { Component } from '@angular/core';
   host: {
     class: 'flex flex-col p-4 gap-3',
   },
+  standalone: true,
+  imports: [CommonModule, RouterModule],
 })
-export class AppComponent {}
+export class AppComponent {
+  constructor(private route: ActivatedRoute) {}
+}
